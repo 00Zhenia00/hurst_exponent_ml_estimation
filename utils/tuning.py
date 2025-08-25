@@ -66,10 +66,7 @@ def get_objective(
                     y=y_train,
                     cv=cv_folds,
                     scoring=scorer,
-                    n_jobs=(
-                        None if hasattr(estimator, "n_jobs")
-                        else cpus_to_use
-                    )
+                    n_jobs=(None if hasattr(estimator, "n_jobs") else cpus_to_use),
                 ).mean()
 
                 if direction != "maximize":
@@ -134,7 +131,7 @@ def tune_hyperparameters(
         cv_folds=cv_folds,
         X_val=X_val,
         y_val=y_val,
-        cpus_to_use=cpus_to_use
+        cpus_to_use=cpus_to_use,
     )
 
     with mlflow.start_run(
