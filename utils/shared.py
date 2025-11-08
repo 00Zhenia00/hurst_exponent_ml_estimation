@@ -1,8 +1,19 @@
+import joblib
 from xgboost.sklearn import XGBRegressor
 from lightgbm.sklearn import LGBMRegressor
 from sklearn.linear_model import Lasso, Ridge
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor
+
+
+def save_model(model, path):
+    """Saves the model to the specified path using joblib."""
+    joblib.dump(model, path)
+
+
+def load_model(path):
+    """Loads the model from the specified path using joblib."""
+    return joblib.load(path)
 
 
 def get_model_by_name(model_name: str, random_state: int = 42, n_jobs: int = -1):

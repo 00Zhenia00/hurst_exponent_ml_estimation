@@ -2,7 +2,10 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-def plot_correlation_with_target(data: pd.DataFrame, target_column: str, plot_size: tuple = (12, 8)):
+
+def plot_correlation_with_target(
+    data: pd.DataFrame, target_column: str, plot_size: tuple = (12, 8)
+):
     # Compute correlations between all variables and target
     correlations = data.corr()[target_column].drop(target_column).sort_values()
 
@@ -31,10 +34,11 @@ def plot_correlation_with_target(data: pd.DataFrame, target_column: str, plot_si
     plt.tight_layout()
     plt.show()
 
+
 def plot_heatmap(data, plot_size: tuple = (12, 8)):
     corr = data.corr()
     plt.figure(figsize=plot_size)
-    sns.heatmap(corr, annot=False, cmap='coolwarm', center=0)
-    plt.title('Feature Correlation Heatmap')
+    sns.heatmap(corr, annot=False, cmap="coolwarm", center=0)
+    plt.title("Feature Correlation Heatmap")
     plt.tight_layout()
     plt.show()

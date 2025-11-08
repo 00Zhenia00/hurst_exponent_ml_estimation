@@ -66,10 +66,7 @@ def get_objective(
                     y=y_train,
                     cv=cv_folds,
                     scoring=scorer,
-                    n_jobs=(
-                        None if hasattr(estimator, "n_jobs")
-                        else cpus_to_use
-                    )
+                    n_jobs=(None if hasattr(estimator, "n_jobs") else cpus_to_use),
                 ).mean()
 
                 if direction != "maximize":
@@ -134,7 +131,7 @@ def tune_hyperparameters(
         cv_folds=cv_folds,
         X_val=X_val,
         y_val=y_val,
-        cpus_to_use=cpus_to_use
+        cpus_to_use=cpus_to_use,
     )
 
     with mlflow.start_run(
@@ -176,43 +173,42 @@ def get_lasso_hyperparams(trial):
 
 def get_decision_tree_hyperparams(trial):
     return {
-        "max_depth": trial.suggest_int("max_depth", 2, 20),
-        "min_samples_split": trial.suggest_int("min_samples_split", 2, 20),
-        "min_samples_leaf": trial.suggest_int("min_samples_leaf", 1, 10),
+        "max_depth": trial.suggest_int("max_depth", 2, 100),
+        "min_samples_split": trial.suggest_int("min_samples_split", 2, 100),
+        "min_samples_leaf": trial.suggest_int("min_samples_leaf", 1, 100),
     }
 
 
 def get_random_forest_hyperparams(trial):
     return {
         "n_estimators": trial.suggest_int("n_estimators", 50, 300, step=50),
-        "max_depth": trial.suggest_int("max_depth", 2, 20),
-        "min_samples_split": trial.suggest_int("min_samples_split", 2, 20),
-        "min_samples_leaf": trial.suggest_int("min_samples_leaf", 1, 10),
+        "max_depth": trial.suggest_int("max_depth", 2, 60),
+        "min_samples_split": trial.suggest_int("min_samples_split", 2, 100),
+        "min_samples_leaf": trial.suggest_int("min_samples_leaf", 1, 100),
     }
 
 
 def get_lightgbm_hyperparams(trial):
     return {
         "num_leaves": trial.suggest_int("num_leaves", 20, 300, step=20),
-        "max_depth": trial.suggest_int("max_depth", 2, 20),
+        "max_depth": trial.suggest_int("max_depth", 2, 60),
         "learning_rate": trial.suggest_float("learning_rate", 1e-3, 0.1, log=True),
         "n_estimators": trial.suggest_int("n_estimators", 50, 300, step=50),
-        "min_child_samples": trial.suggest_int("min_child_samples", 5, 50, step=5),
+        "min_child_samples": trial.suggest_int("min_child_samples", 1, 100, step=5),
         "lambda_l1": trial.suggest_float("lambda_l1", 0, 10),
         "lambda_l2": trial.suggest_float("lambda_l2", 0, 10),
     }
 
-
 def get_xgboost_hyperparams(trial):
     return {
-        "max_depth": trial.suggest_int("max_depth", 2, 20),
+        "max_depth": trial.suggest_int("max_depth", 2, 60),
         "learning_rate": trial.suggest_float("learning_rate", 1e-3, 0.1, log=True),
         "n_estimators": trial.suggest_int("n_estimators", 50, 300, step=50),
-        "min_child_weight": trial.suggest_int("min_child_weight", 5, 50, step=5),
-        "reg_alpha": trial.suggest_float("reg_alpha", 0, 10, log=True),
-        "reg_lambda": trial.suggest_float("reg_lambda", 0, 10, log=True),
+        "min_child_weight": trial.suggest_int("min_child_weight", 1, 100, step=5),
+        "gamma": trial.suggest_float("gamma", 0, 10),
+        "reg_alpha": trial.suggest_float("reg_alpha", 0, 10),
+        "reg_lambda": trial.suggest_float("reg_lambda", 0, 10),
     }
-
 
 def get_hyperparams_getter_function_by_model_name(model_name):
     """
