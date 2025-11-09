@@ -1,0 +1,9 @@
+{
+    "n_layers": 3,
+    "base_width": 126,
+    "width_pattern": "constant",
+    "activation": "tanh",
+    "solver": "adam",
+    "alpha": 7.521372364436944e-05,
+    "learning_rate_init": 0.0009902090951814139
+}
