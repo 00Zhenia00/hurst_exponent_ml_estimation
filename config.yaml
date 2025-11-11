@@ -13,7 +13,7 @@ training_experiment_name: training
 scoring_experiment_name: scoring
 
 # modeling
-sample_sizes: [25]
+sample_sizes: [25, 50, 100]
 train_samples_num: 100000
 test_samples_num: 1000
 models: [MLP] # Ridge, Lasso, DecisionTree, RandomForest, LightGBM, XGBoost, MLP
