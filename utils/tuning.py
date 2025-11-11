@@ -74,7 +74,7 @@ def get_objective(
                         -result
                     )  # Invert results of the sklearn.metrics.make_scorer scorer
 
-            mlflow.log_params(hyperparams)
+            mlflow.log_params(prepare_hyperparams(hyperparams))
             mlflow.log_metric("rmse", result)
 
         return result
@@ -153,7 +153,7 @@ def tune_hyperparameters(
         }
         mlflow.log_dict(run_info, "run_info.json")
 
-        mlflow.log_params(transform_mlp_trial_hyperparams_to_model_params(study.best_params))
+        mlflow.log_params(prepare_hyperparams(study.best_params, estimator))
         mlflow.log_metric("best_rmse", study.best_value)
         mlflow.log_figure(
             optuna.visualization.plot_optimization_history(study),
@@ -161,6 +161,12 @@ def tune_hyperparameters(
         )
 
     return study
+
+
+def prepare_hyperparams(hyperparams: dict, estimator) -> dict:
+    if estimator.__class__.__name__ == "MLPRegressor":
+        return transform_mlp_trial_hyperparams_to_model_params(hyperparams)
+    return hyperparams
 
 
 def get_ridge_hyperparams(trial):

@@ -1,9 +1,11 @@
 {
-    "n_layers": 3,
-    "base_width": 126,
-    "width_pattern": "constant",
-    "activation": "tanh",
+    "hidden_layer_sizes": [
+        129,
+        129,
+        129
+    ],
+    "activation": "relu",
     "solver": "adam",
-    "alpha": 7.521372364436944e-05,
-    "learning_rate_init": 0.0009902090951814139
+    "alpha": 0.002742186842858866,
+    "learning_rate_init": 0.0003955535158045242
 }

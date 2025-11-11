@@ -1,9 +1,10 @@
 {
-    "n_layers": 3,
-    "base_width": 97,
-    "width_pattern": "decreasing",
+    "hidden_layer_sizes": [
+        129,
+        129
+    ],
     "activation": "relu",
     "solver": "adam",
-    "alpha": 0.011332536191549475,
-    "learning_rate_init": 0.0004849096416530844
+    "alpha": 0.003870906228401875,
+    "learning_rate_init": 0.0007399315772664507
 }
