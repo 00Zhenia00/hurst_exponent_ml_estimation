@@ -41,6 +41,9 @@ def score_model(experiment_name, run_name, model, X_test, y_test: pd.Series):
             ):
                 explainer = shap.TreeExplainer(model, X_test)
                 shap_values = explainer(X_test, check_additivity=False)
+            elif model_name.startswith("mlpregressor"):
+                explainer = shap.Explainer(model.predict, X_test)
+                shap_values = explainer(X_test)
             else:
                 explainer = shap.Explainer(model, X_test)
                 shap_values = explainer(X_test)

@@ -74,7 +74,7 @@ def get_objective(
                         -result
                     )  # Invert results of the sklearn.metrics.make_scorer scorer
 
-            mlflow.log_params(hyperparams)
+            mlflow.log_params(prepare_hyperparams(hyperparams))
             mlflow.log_metric("rmse", result)
 
         return result
@@ -153,7 +153,7 @@ def tune_hyperparameters(
         }
         mlflow.log_dict(run_info, "run_info.json")
 
-        mlflow.log_params(study.best_params)
+        mlflow.log_params(prepare_hyperparams(study.best_params, estimator))
         mlflow.log_metric("best_rmse", study.best_value)
         mlflow.log_figure(
             optuna.visualization.plot_optimization_history(study),
@@ -161,6 +161,12 @@ def tune_hyperparameters(
         )
 
     return study
+
+
+def prepare_hyperparams(hyperparams: dict, estimator) -> dict:
+    if estimator.__class__.__name__ == "MLPRegressor":
+        return transform_mlp_trial_hyperparams_to_model_params(hyperparams)
+    return hyperparams
 
 
 def get_ridge_hyperparams(trial):
@@ -210,6 +216,55 @@ def get_xgboost_hyperparams(trial):
         "reg_lambda": trial.suggest_float("reg_lambda", 0, 10),
     }
 
+def get_mlp_hyperparams(trial):
+    n_layers = trial.suggest_int("n_layers", 1, 3)
+    base_width = trial.suggest_int("base_width", 16, 129, log=True)
+    width_pattern = trial.suggest_categorical(
+        "width_pattern", ["decreasing", "constant"]
+    )
+
+    if width_pattern == "decreasing":
+        hidden_layer_sizes = tuple(int(base_width / (2 ** i)) for i in range(n_layers))
+    else:  # constant
+        hidden_layer_sizes = tuple([base_width] * n_layers)
+
+    activation = trial.suggest_categorical("activation", ["relu", "tanh"])
+    solver = trial.suggest_categorical("solver", ["adam", "sgd"])
+    alpha = trial.suggest_float("alpha", 1e-5, 1e-1, log=True)
+    learning_rate_init = trial.suggest_float("learning_rate_init", 1e-4, 1e-2, log=True)
+
+    params = {
+        "hidden_layer_sizes": hidden_layer_sizes,
+        "activation": activation,
+        "solver": solver,
+        "alpha": alpha,
+        "learning_rate_init": learning_rate_init
+    }
+
+    return params
+
+
+def transform_mlp_trial_hyperparams_to_model_params(params):
+    n_layers = params["n_layers"]
+    base_width = params["base_width"]
+    width_pattern = params["width_pattern"]
+    if width_pattern == "decreasing":
+        hidden_layer_sizes = tuple(int(base_width / (2 ** i)) for i in range(n_layers))
+    else:  # constant
+        hidden_layer_sizes = tuple([base_width] * n_layers)
+    activation = params["activation"]
+    solver = params["solver"]
+    alpha = params["alpha"]
+    learning_rate_init = params["learning_rate_init"]
+    return {
+        "hidden_layer_sizes": hidden_layer_sizes,
+        "activation": activation,
+        "solver": solver,
+        "alpha": alpha,
+        "learning_rate_init": learning_rate_init
+    }
+
+
 def get_hyperparams_getter_function_by_model_name(model_name):
     """
     Returns the hyperparameter getter function for a given model name.
@@ -236,6 +291,8 @@ def get_hyperparams_getter_function_by_model_name(model_name):
         return get_lightgbm_hyperparams
     elif model_name == "XGBoost":
         return get_xgboost_hyperparams
+    elif model_name == "MLP":
+        return get_mlp_hyperparams
     else:
         raise ValueError(
             f"get_hyperparams_getter_function_by_model_name(): Model {model_name} is not supported!"

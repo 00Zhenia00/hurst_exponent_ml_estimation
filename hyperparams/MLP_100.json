@@ -1,0 +1,11 @@
+{
+    "hidden_layer_sizes": [
+        129,
+        129,
+        129
+    ],
+    "activation": "relu",
+    "solver": "adam",
+    "alpha": 0.002742186842858866,
+    "learning_rate_init": 0.0003955535158045242
+}

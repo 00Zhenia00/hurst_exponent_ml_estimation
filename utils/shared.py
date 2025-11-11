@@ -4,6 +4,7 @@ from lightgbm.sklearn import LGBMRegressor
 from sklearn.linear_model import Lasso, Ridge
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor
+from sklearn.neural_network import MLPRegressor
 
 
 def save_model(model, path):
@@ -45,5 +46,7 @@ def get_model_by_name(model_name: str, random_state: int = 42, n_jobs: int = -1)
         return LGBMRegressor(random_state=random_state, n_jobs=n_jobs)
     elif model_name == "XGBoost":
         return XGBRegressor(random_state=random_state, n_jobs=n_jobs)
+    elif model_name == "MLP":
+        return MLPRegressor(random_state=random_state)
     else:
         raise ValueError(f"get_model_by_name(): Model {model_name} is not supported!")
