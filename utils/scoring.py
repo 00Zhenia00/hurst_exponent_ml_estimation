@@ -39,7 +39,7 @@ def score_model(experiment_name, run_name, model, X_test, y_test: pd.Series):
                 or (model_name == "xgbregressor")
                 or (model_name == "lgbmregressor")
             ):
-                explainer = shap.TreeExplainer(model, X_test)
+                explainer = shap.TreeExplainer(model, X_test.sample(100))
                 shap_values = explainer(X_test, check_additivity=False)
             elif model_name.startswith("mlpregressor"):
                 explainer = shap.Explainer(model.predict, X_test)
