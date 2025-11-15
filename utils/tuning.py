@@ -74,7 +74,7 @@ def get_objective(
                         -result
                     )  # Invert results of the sklearn.metrics.make_scorer scorer
 
-            mlflow.log_params(prepare_hyperparams(hyperparams))
+            mlflow.log_params(prepare_hyperparams(hyperparams, estimator))
             mlflow.log_metric("rmse", result)
 
         return result
