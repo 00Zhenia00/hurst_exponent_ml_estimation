@@ -1,0 +1,8 @@
+{
+    "n_units": 49,
+    "n_layers": 2,
+    "dropout": 0.18458954220003052,
+    "learning_rate": 0.00015042682234465401,
+    "batch_size": 16,
+    "epochs": 22
+}

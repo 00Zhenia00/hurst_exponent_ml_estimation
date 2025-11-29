@@ -8,9 +8,15 @@ from sklearn.metrics import root_mean_squared_error
 from .mlflow_utils import get_or_create_experiment
 
 from utils.shared import load_model
+from utils.rs_estimator import RSEstimator
+from utils.dfa_estimator import DFAEstimator
 
 
 def get_trained_model_by_name(model_name, data_dim: int):
+    if model_name == "RS":
+        return RSEstimator()
+    elif model_name == "DFA":
+        return DFAEstimator()
     return load_model(f"models/{model_name}_{data_dim}.joblib")
 
 

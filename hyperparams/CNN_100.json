@@ -1,0 +1,10 @@
+{
+    "n_filters": 79,
+    "n_conv_layers": 1,
+    "kernel_size": 4,
+    "dense_units": 36,
+    "dropout": 0.2641804051147591,
+    "learning_rate": 0.0001076983926760031,
+    "batch_size": 16,
+    "epochs": 16
+}

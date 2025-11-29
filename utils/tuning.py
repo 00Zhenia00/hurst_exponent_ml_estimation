@@ -2,6 +2,7 @@ import time
 import uuid
 import mlflow
 import optuna
+import numpy as np
 from sklearn.model_selection import cross_val_score
 from sklearn.metrics import make_scorer
 
@@ -55,6 +56,7 @@ def get_objective(
 
             if not cv_folds:
                 y_pred = estimator.fit(X_train, y_train).predict(X_val)
+                y_pred = np.clip(y_pred, 0.0, 1.0)
                 result = scoring_func(y_val, y_pred)
             else:
                 scorer = make_scorer(
@@ -68,6 +70,8 @@ def get_objective(
                     scoring=scorer,
                     n_jobs=(None if hasattr(estimator, "n_jobs") else cpus_to_use),
                 ).mean()
+
+                result = np.clip(result, 0.0, 1.0)
 
                 if direction != "maximize":
                     result = (
@@ -147,8 +151,8 @@ def tune_hyperparameters(
         run_info = {
             "feature_count_train": X_train.shape[1],
             "rows_count_train": X_train.shape[0],
-            "feature_count_val": X_val.shape[1] if X_val else None,
-            "rows_count_val": X_val.shape[0] if X_val else None,
+            "feature_count_val": X_val.shape[1] if X_val is not None else None,
+            "rows_count_val": X_val.shape[0] if X_val is not None else None,
             "tuning_time": f"{int(elapsed_time//3600)}h {int(elapsed_time//60)}m {int(elapsed_time%60)}s",
         }
         mlflow.log_dict(run_info, "run_info.json")
@@ -244,6 +248,30 @@ def get_mlp_hyperparams(trial):
     return params
 
 
+def get_rnn_hyperparams(trial):
+    return {
+        "model__n_units": trial.suggest_int("n_units", 16, 128, log=True),
+        "model__n_layers": trial.suggest_int("n_layers", 1, 2),
+        "model__dropout": trial.suggest_float("dropout", 0.0, 0.5),
+        "model__learning_rate": trial.suggest_float("learning_rate", 1e-4, 1e-2, log=True),
+        "batch_size": trial.suggest_categorical("batch_size", [16, 32, 64]),
+        "epochs": trial.suggest_int("epochs", 10, 30)
+    }
+
+
+def get_cnn_hyperparams(trial):
+    return {
+        "model__n_filters": trial.suggest_int("n_filters", 16, 128),
+        "model__n_conv_layers": trial.suggest_int("n_conv_layers", 1, 3),
+        "model__kernel_size": trial.suggest_int("kernel_size", 2, 9),
+        "model__dense_units": trial.suggest_int("dense_units", 32, 256),
+        "model__dropout": trial.suggest_float("dropout", 0.0, 0.5),
+        "model__learning_rate": trial.suggest_float("learning_rate", 1e-4, 1e-2, log=True),
+        "batch_size": trial.suggest_categorical("batch_size", [16, 32, 64]),
+        "epochs": trial.suggest_int("epochs", 10, 30),
+    }
+
+
 def transform_mlp_trial_hyperparams_to_model_params(params):
     n_layers = params["n_layers"]
     base_width = params["base_width"]
@@ -293,6 +321,10 @@ def get_hyperparams_getter_function_by_model_name(model_name):
         return get_xgboost_hyperparams
     elif model_name == "MLP":
         return get_mlp_hyperparams
+    elif model_name == "RNN":
+        return get_rnn_hyperparams
+    elif model_name == "CNN":
+        return get_cnn_hyperparams
     else:
         raise ValueError(
             f"get_hyperparams_getter_function_by_model_name(): Model {model_name} is not supported!"

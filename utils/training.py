@@ -26,6 +26,16 @@ def get_tuned_hyperparameters(model_name: str, data_dim: int) -> dict:
             with data dimension {data_dim} not found!"
         )
 
+    if model_name == "RNN" or model_name == "CNN":
+        result_hyperparameters = {}
+        # Add `model__` prefix to each hyperparameter for KerasRegressor compatibility
+        for hyperparameter_name, value in hyperparameters.items():
+            if hyperparameter_name not in ["batch_size", "epochs"]:
+                result_hyperparameters[f"model__{hyperparameter_name}"] = value
+            else:
+                result_hyperparameters[hyperparameter_name] = value
+        hyperparameters = result_hyperparameters
+
     return hyperparameters
 
 
