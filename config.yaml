@@ -13,12 +13,13 @@ training_experiment_name: training
 scoring_experiment_name: scoring
 
 # modeling
-sample_sizes: [25, 50, 100]
+sample_sizes: [25]
 train_samples_num: 100000
 test_samples_num: 1000
-models: [Ridge, Lasso, DecisionTree, RandomForest, LightGBM, XGBoost, MLP]
+models: [MLP, RNN, CNN] # Ridge, Lasso, DecisionTree, RandomForest, LightGBM, XGBoost, MLP, RNN, CNN, RS, DFA
 
 # tuning
+test_split_ratio: 0.2
 cv_folds: 3
 trials:
   Ridge: 30
@@ -28,6 +29,8 @@ trials:
   LightGBM: 80
   XGBoost: 80
   MLP: 60
+  RNN: 30
+  CNN: 30
 
 # features
 target_column: hurst
