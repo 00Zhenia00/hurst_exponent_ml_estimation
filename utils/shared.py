@@ -41,6 +41,76 @@ def build_cnn_model(input_shape, n_filters=32, n_conv_layers=2, kernel_size=3, d
     return model
 
 
+class RNNRegressor(KerasRegressor):
+    def __init__(
+        self,
+        n_units=64,
+        n_layers=1,
+        dropout=0.0,
+        learning_rate=1e-3,
+        epochs=20,
+        batch_size=32,
+        verbose=0,
+        random_state=None,
+        **kwargs
+    ):
+        super().__init__(
+            model=build_rnn_model,
+            n_units=n_units,
+            n_layers=n_layers,
+            dropout=dropout,
+            learning_rate=learning_rate,
+            epochs=epochs,
+            batch_size=batch_size,
+            verbose=verbose,
+            random_state=random_state,
+            **kwargs
+        )
+
+    def fit(self, X, y, **kwargs):
+        return super().fit(X, y, **kwargs)
+
+    def predict(self, X, **kwargs):
+        return super().predict(X, **kwargs)
+
+
+class CNNRegressor(KerasRegressor):
+    def __init__(
+        self,
+        n_filters=32,
+        n_conv_layers=2,
+        kernel_size=3,
+        dense_units=64,
+        dropout=0.2,
+        learning_rate=1e-3,
+        epochs=20,
+        batch_size=32,
+        verbose=0,
+        random_state=None,
+        **kwargs
+    ):
+        super().__init__(
+            model=build_cnn_model,
+            n_filters=n_filters,
+            n_conv_layers=n_conv_layers,
+            kernel_size=kernel_size,
+            dense_units=dense_units,
+            dropout=dropout,
+            learning_rate=learning_rate,
+            epochs=epochs,
+            batch_size=batch_size,
+            verbose=verbose,
+            random_state=random_state,
+            **kwargs
+        )
+
+    def fit(self, X, y, **kwargs):
+        return super().fit(X, y, **kwargs)
+
+    def predict(self, X, **kwargs):
+        return super().predict(X, **kwargs)
+
+
 def save_model(model, path):
     """Saves the model to the specified path using joblib."""
     joblib.dump(model, path)
@@ -82,13 +152,17 @@ def get_model_by_name(model_name: str, random_state: int = 42, n_jobs: int = -1,
         return XGBRegressor(random_state=random_state, n_jobs=n_jobs)
     elif model_name == "MLP":
         return MLPRegressor(random_state=random_state)
+    # elif model_name == "RNN":
+    #     if input_shape is None:
+    #         raise ValueError("get_model_by_name(): For RNN model, 'input_shape' must be provided.")
+    #     return KerasRegressor(model=build_rnn_model, model__input_shape=input_shape, verbose=1, random_state=random_state)
+    # elif model_name == "CNN":
+    #     if input_shape is None:
+    #         raise ValueError("For CNN model, 'input_shape' must be provided.")
+    #     return KerasRegressor(model=build_cnn_model, model__input_shape=input_shape, verbose=1, random_state=random_state)
     elif model_name == "RNN":
-        if input_shape is None:
-            raise ValueError("get_model_by_name(): For RNN model, 'input_shape' must be provided.")
-        return KerasRegressor(model=build_rnn_model, model__input_shape=input_shape, verbose=1, random_state=random_state)
+        return RNNRegressor(model__input_shape=input_shape, verbose=1, random_state=random_state)
     elif model_name == "CNN":
-        if input_shape is None:
-            raise ValueError("For CNN model, 'input_shape' must be provided.")
-        return KerasRegressor(model=build_cnn_model, model__input_shape=input_shape, verbose=1, random_state=random_state)
+        return CNNRegressor(model__input_shape=input_shape, verbose=1, random_state=random_state)
     else:
         raise ValueError(f"get_model_by_name(): Model {model_name} is not supported!")

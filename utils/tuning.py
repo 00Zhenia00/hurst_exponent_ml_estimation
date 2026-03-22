@@ -248,12 +248,36 @@ def get_mlp_hyperparams(trial):
     return params
 
 
+# def get_rnn_hyperparams(trial):
+#     return {
+#         "model__n_units": trial.suggest_int("n_units", 16, 128, log=True),
+#         "model__n_layers": trial.suggest_int("n_layers", 1, 2),
+#         "model__dropout": trial.suggest_float("dropout", 0.0, 0.5),
+#         "model__learning_rate": trial.suggest_float("learning_rate", 1e-4, 1e-2, log=True),
+#         "batch_size": trial.suggest_categorical("batch_size", [16, 32, 64]),
+#         "epochs": trial.suggest_int("epochs", 10, 30)
+#     }
+
+
+# def get_cnn_hyperparams(trial):
+#     return {
+#         "model__n_filters": trial.suggest_int("n_filters", 16, 128),
+#         "model__n_conv_layers": trial.suggest_int("n_conv_layers", 1, 3),
+#         "model__kernel_size": trial.suggest_int("kernel_size", 2, 9),
+#         "model__dense_units": trial.suggest_int("dense_units", 32, 256),
+#         "model__dropout": trial.suggest_float("dropout", 0.0, 0.5),
+#         "model__learning_rate": trial.suggest_float("learning_rate", 1e-4, 1e-2, log=True),
+#         "batch_size": trial.suggest_categorical("batch_size", [16, 32, 64]),
+#         "epochs": trial.suggest_int("epochs", 10, 30),
+#     }
+
+
 def get_rnn_hyperparams(trial):
     return {
-        "model__n_units": trial.suggest_int("n_units", 16, 128, log=True),
-        "model__n_layers": trial.suggest_int("n_layers", 1, 2),
-        "model__dropout": trial.suggest_float("dropout", 0.0, 0.5),
-        "model__learning_rate": trial.suggest_float("learning_rate", 1e-4, 1e-2, log=True),
+        "n_units": trial.suggest_int("n_units", 16, 128, log=True),
+        "n_layers": trial.suggest_int("n_layers", 1, 2),
+        "dropout": trial.suggest_float("dropout", 0.0, 0.5),
+        "learning_rate": trial.suggest_float("learning_rate", 1e-4, 1e-2, log=True),
         "batch_size": trial.suggest_categorical("batch_size", [16, 32, 64]),
         "epochs": trial.suggest_int("epochs", 10, 30)
     }
@@ -261,12 +285,12 @@ def get_rnn_hyperparams(trial):
 
 def get_cnn_hyperparams(trial):
     return {
-        "model__n_filters": trial.suggest_int("n_filters", 16, 128),
-        "model__n_conv_layers": trial.suggest_int("n_conv_layers", 1, 3),
-        "model__kernel_size": trial.suggest_int("kernel_size", 2, 9),
-        "model__dense_units": trial.suggest_int("dense_units", 32, 256),
-        "model__dropout": trial.suggest_float("dropout", 0.0, 0.5),
-        "model__learning_rate": trial.suggest_float("learning_rate", 1e-4, 1e-2, log=True),
+        "n_filters": trial.suggest_int("n_filters", 16, 128),
+        "n_conv_layers": trial.suggest_int("n_conv_layers", 1, 3),
+        "kernel_size": trial.suggest_int("kernel_size", 2, 9),
+        "dense_units": trial.suggest_int("dense_units", 32, 256),
+        "dropout": trial.suggest_float("dropout", 0.0, 0.5),
+        "learning_rate": trial.suggest_float("learning_rate", 1e-4, 1e-2, log=True),
         "batch_size": trial.suggest_categorical("batch_size", [16, 32, 64]),
         "epochs": trial.suggest_int("epochs", 10, 30),
     }
