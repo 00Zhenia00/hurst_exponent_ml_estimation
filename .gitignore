@@ -1,3 +1,4 @@
-data/
+inference/
 __pycache__/
 mlruns/
+drafts/
