@@ -16,7 +16,7 @@ scoring_experiment_name: scoring
 sample_sizes: [25]
 train_samples_num: 100000
 test_samples_num: 1000
-models: [MLP, RNN, CNN] # Ridge, Lasso, DecisionTree, RandomForest, LightGBM, XGBoost, MLP, RNN, CNN, RS, DFA
+models: [Ridge, Lasso, DecisionTree, RandomForest, LightGBM, XGBoost, MLP, RNN, CNN, RS, DFA] 
 
 # tuning
 test_split_ratio: 0.2
