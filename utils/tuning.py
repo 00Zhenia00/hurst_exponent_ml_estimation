@@ -2,7 +2,6 @@ import time
 import uuid
 import mlflow
 import optuna
-import numpy as np
 from sklearn.model_selection import cross_val_score
 from sklearn.metrics import make_scorer
 
@@ -56,12 +55,9 @@ def get_objective(
 
             if not cv_folds:
                 y_pred = estimator.fit(X_train, y_train).predict(X_val)
-                y_pred = np.clip(y_pred, 0.0, 1.0)
                 result = scoring_func(y_val, y_pred)
             else:
-                scorer = make_scorer(
-                    scoring_func, greater_is_better=(direction == "maximize")
-                )
+                scorer = make_scorer(scoring_func, greater_is_better=False)
                 result = cross_val_score(
                     estimator=estimator,
                     X=X_train,
@@ -71,12 +67,8 @@ def get_objective(
                     n_jobs=(None if hasattr(estimator, "n_jobs") else cpus_to_use),
                 ).mean()
 
-                result = np.clip(result, 0.0, 1.0)
-
                 if direction != "maximize":
-                    result = (
-                        -result
-                    )  # Invert results of the sklearn.metrics.make_scorer scorer
+                    result = -result
 
             mlflow.log_params(prepare_hyperparams(hyperparams, estimator))
             mlflow.log_metric("rmse", result)
